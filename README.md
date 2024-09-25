@@ -3,7 +3,7 @@
 It has been developed using Cargo, so you need to ensure that you have both the Rust Compiler and the Cargo Package Manager installed.
 
 ```
-git@github.com:divlikescoding/hexdump.git //Clone repo
+git clone git@github.com:divlikescoding/hexdump.git //Clone repo
 
 cd hexdump //Navigaet to hexdump folder
 
@@ -20,8 +20,8 @@ After following these steps you will see that there is an executable in the targ
 
 # Description
 
-This hexdump utility is implemented in alignment with the Linux hexdump command. It outputs file contents in lines of 16 bytes, with each line composed of eight 2-byte words. A 32-bit hexadecimal offset is printed at the beginning of each line, indicating the byte offset of the first byte in that line from the start of the file. 
+This hexdump utility is designed to mirror the functionality of the Linux hexdump command. It formats file content into lines of 16 bytes, with each line consisting of eight 2-byte words. At the beginning of each line, a 32-bit hexadecimal offset is displayed, representing the byte offset of the first byte on that line relative to the start of the file. Additionally, the total number of bytes processed is printed at the end of the output.
 
-The byte order is determined by the system's endianness. On a little-endian machine, each 2-byte word is displayed with the least significant byte (LSB) first, followed by the most significant byte (MSB). On a big-endian machine, the order is reversed.
+The byte order adheres to the system's endianness. On little-endian systems, each 2-byte word is presented with the least significant byte (LSB) first, followed by the most significant byte (MSB). On big-endian systems, this order is reversed.
 
-This implementation also optimizes output by omitting repetitive lines. If multiple consecutive lines contain identical byte sequences, only the first is displayed, and subsequent matching lines are replaced with an asterisk (*), followed by the next unique line with its corresponding offset.
+To enhance output efficiency, the utility suppresses consecutive duplicate lines. When identical byte sequences appear across multiple consecutive lines, only the first line is printed, and subsequent matching lines are replaced by an asterisk (*). The output then resumes with the next unique line and its corresponding offset.
