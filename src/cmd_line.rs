@@ -75,7 +75,7 @@ pub fn parse_cmd_line_args() -> Result<CommandLineArgs, i32> {
  * Prints the appropriate message to the user given the error code returned by the parse_cmd_line_args function
  */
 pub fn print_message_from_error_code(error_code: i32) {
-    let program_name: String = std::env::args().collect::<Vec<String>>()[0].clone();
+    let program_name = get_program_name();
     match error_code {
         0 => print_usage_string(&program_name),
         -1 => print_invalid_len_error(&program_name),
@@ -83,6 +83,13 @@ pub fn print_message_from_error_code(error_code: i32) {
         -3 => print_no_file_name_error(&program_name),
         _ => {}
     }
+}
+
+/**
+ * Returns the name of the executable
+ */
+pub fn get_program_name() -> String {
+    std::env::args().collect::<Vec<String>>()[0].clone() 
 }
 
 fn print_usage_string(program_name: &String) {
