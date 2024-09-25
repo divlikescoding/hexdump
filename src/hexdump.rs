@@ -44,17 +44,46 @@ pub fn hexdump(cmd_line_args: CommandLineArgs) {
     print_byte_line(&curr_bytes, &prev_bytes, &mut is_star_printed, &mut offset, 
         is_little_endian);
 
-    println!("{}", get_hex_value_for_four_byte(byte_count));
+    println!("{}", get_hex_value_for_byte_vec(&byte_count.to_le_bytes()));
 }
 
-fn check_is_little_endian() -> bool {
-    let value = u32::from_le_bytes([1, 0, 0, 0]);
-    value == 1
-}
+fn get_byte_line(bytes: &Vec<u8>, offset: u32, is_little_endian: bool) -> String {
+    //let mut return_value: String = get_hex_value_for_four_byte(offset);
+    let mut return_value: String = get_hex_value_for_byte_vec(&offset.to_le_bytes());
+    let mut curr_word: [u8; 2] = [0, 0];
+    let mut byte_index: u8 = 0;
+    for curr_byte_ref in bytes {
+        let curr_byte = *curr_byte_ref;
+        if is_little_endian {
+            if byte_index == 1 {
+                curr_word[1] = curr_byte;
+            } else {
+                curr_word[0] = curr_byte;
+            }
+        } else {
+            if byte_index == 0 {
+                curr_word[1] = curr_byte;
+            } else {
+                curr_word[0] = curr_byte;
+            }
+        }
+        if byte_index == 0 {
+            byte_index = byte_index + 1;
+        } else {
+            return_value = format!("{} {}", return_value, 
+                get_hex_value_for_byte_vec(&curr_word));
+            byte_index = 0;
+            curr_word = [0, 0];
+        }
+    }
 
-fn print_message_from_error_code(err: Error) {
-    let program_name = get_program_name();
-    println!("{}: {}", program_name, err);
+    /* If there are an odd number of bytes in the sequence then print the last byte in the MSB position of the next word  */
+    if byte_index == 1 {
+        return_value = format!("{} {}", return_value, 
+            get_hex_value_for_byte_vec(&curr_word));
+    }
+
+    return_value
 }
 
 fn print_byte_line(curr_bytes: &Vec<u8>, prev_bytes: &Vec<u8>, 
@@ -89,69 +118,20 @@ fn is_byte_vec_equal(left_bytes: &Vec<u8>, right_bytes: &Vec<u8>) -> bool {
     }
 }
 
-fn get_byte_line(bytes: &Vec<u8>, offset: u32, is_little_endian: bool) -> String {
-    let mut return_value: String = get_hex_value_for_four_byte(offset);
-    let mut curr_word: u16 = 0;
-    let mut byte_index: u8 = 0;
-    for curr_byte_ref in bytes {
-        let curr_byte = *curr_byte_ref;
-        let mut curr_byte_word = curr_byte as u16;
-        if is_little_endian {
-            if byte_index == 1 {
-                curr_byte_word = curr_byte_word << 8;
-            }
-        } else {
-            if byte_index == 0 {
-                curr_byte_word = curr_byte_word << 8;
-            }
-        }
-        curr_word = curr_word | curr_byte_word;
-        if byte_index == 0 {
-            byte_index = byte_index + 1;
-        } else {
-            return_value = format!("{} {}", return_value, 
-                get_hex_value_for_two_byte(curr_word));
-            byte_index = 0;
-            curr_word = 0;
-        }
+fn get_hex_value_for_byte_vec(byte_vec: &[u8]) -> String {
+    let mut return_value: String = String::new();
+    for curr_byte_ref in byte_vec {
+        let curr_byte: u8 = *curr_byte_ref;
+        let lower_nibble: u8 = curr_byte & 0x0f;
+        let upper_nibble: u8 = (curr_byte >> 4) & 0x0f;
+
+        let lower_nibble_char: char = get_hex_value_for_nibble(lower_nibble);
+        let upper_nibble_char: char = get_hex_value_for_nibble(upper_nibble);
+
+        return_value.insert(0, lower_nibble_char);
+        return_value.insert(0, upper_nibble_char);
     }
 
-    /* If there are an odd number of bytes in the sequence then print the last byte in the MSB position of the next word  */
-    if byte_index == 1 {
-        return_value = format!("{} {}", return_value, 
-            get_hex_value_for_two_byte(curr_word));
-    }
-
-    return_value
-}
-
-fn get_hex_value_for_two_byte(two_byte: u16) -> String {
-    let mut nibbles: Vec<u8> = Vec::new();
-    for curr_nibble_pos in 0..4 {
-        let curr_nibble = ((two_byte >> 4*curr_nibble_pos) & 0x0f) as u8;
-        nibbles.push(curr_nibble);
-    }
-
-    let mut return_value = String::new();
-    for curr_nibble in nibbles {
-        let curr_char_nibble = get_hex_value_for_nibble(curr_nibble);
-        return_value.insert(0, curr_char_nibble);
-    }
-    return_value
-}
-
-fn get_hex_value_for_four_byte(four_byte: u32) -> String {
-    let mut nibbles: Vec<u8> = Vec::new();
-    for curr_nibble_pos in 0..8 {
-        let curr_nibble = ((four_byte >> 4*curr_nibble_pos) & 0x0f) as u8;
-        nibbles.push(curr_nibble);
-    }
-
-    let mut return_value = String::new();
-    for curr_nibble in nibbles {
-        let curr_char_nibble = get_hex_value_for_nibble(curr_nibble);
-        return_value.insert(0, curr_char_nibble);
-    }
     return_value
 }
 
@@ -175,4 +155,14 @@ fn get_hex_value_for_nibble(nibble: u8) -> char {
         15 => 'f',
         _ => '\0'
     }
+}
+
+fn check_is_little_endian() -> bool {
+    let value = u32::from_le_bytes([1, 0, 0, 0]);
+    value == 1
+}
+
+fn print_message_from_error_code(err: Error) {
+    let program_name = get_program_name();
+    println!("{}: {}", program_name, err);
 }
