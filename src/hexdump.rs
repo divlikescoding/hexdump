@@ -134,25 +134,7 @@ fn get_hex_value_for_two_byte(two_byte: u16) -> String {
 
     let mut return_value = String::new();
     for curr_nibble in nibbles {
-        let curr_char_nibble = match curr_nibble {
-            0 => '0',
-            1 => '1',
-            2 => '2',
-            3 => '3',
-            4 => '4',
-            5 => '5',
-            6 => '6',
-            7 => '7',
-            8 => '8',
-            9 => '9',
-            10 => 'a',
-            11 => 'b',
-            12 => 'c',
-            13 => 'd',
-            14 => 'e',
-            15 => 'f',
-            _ => '\0'
-        };
+        let curr_char_nibble = get_hex_value_for_nibble(curr_nibble);
         return_value.insert(0, curr_char_nibble);
     }
     return_value
@@ -167,26 +149,30 @@ fn get_hex_value_for_four_byte(four_byte: u32) -> String {
 
     let mut return_value = String::new();
     for curr_nibble in nibbles {
-        let curr_char_nibble = match curr_nibble {
-            0 => '0',
-            1 => '1',
-            2 => '2',
-            3 => '3',
-            4 => '4',
-            5 => '5',
-            6 => '6',
-            7 => '7',
-            8 => '8',
-            9 => '9',
-            10 => 'a',
-            11 => 'b',
-            12 => 'c',
-            13 => 'd',
-            14 => 'e',
-            15 => 'f',
-            _ => '\0'
-        };
+        let curr_char_nibble = get_hex_value_for_nibble(curr_nibble);
         return_value.insert(0, curr_char_nibble);
     }
     return_value
+}
+
+fn get_hex_value_for_nibble(nibble: u8) -> char {
+    match nibble {
+        0 => '0',
+        1 => '1',
+        2 => '2',
+        3 => '3',
+        4 => '4',
+        5 => '5',
+        6 => '6',
+        7 => '7',
+        8 => '8',
+        9 => '9',
+        10 => 'a',
+        11 => 'b',
+        12 => 'c',
+        13 => 'd',
+        14 => 'e',
+        15 => 'f',
+        _ => '\0'
+    }
 }
