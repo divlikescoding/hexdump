@@ -97,7 +97,7 @@ fn print_usage_string(program_name: &String) {
 }
 
 fn print_invalid_len_error(program_name: &String) {
-    println!("{}: Invalid paramter was specified for the len in the -n option", program_name);
+    println!("{}: Invalid parameter was specified for the len in the -n option", program_name);
 }
 
 fn print_ambigious_file_name_error(program_name: &String) {
