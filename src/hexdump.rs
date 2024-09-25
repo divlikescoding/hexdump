@@ -44,12 +44,12 @@ pub fn hexdump(cmd_line_args: CommandLineArgs) {
     print_byte_line(&curr_bytes, &prev_bytes, &mut is_star_printed, &mut offset, 
         is_little_endian);
 
-    println!("{}", get_hex_value_for_byte_slice(&byte_count.to_le_bytes()));
+    println!("{}", get_hex_value_from_byte_slice(&byte_count.to_le_bytes()));
 }
 
 fn get_byte_line(bytes: &Vec<u8>, offset: u32, is_little_endian: bool) -> String {
     //let mut return_value: String = get_hex_value_for_four_byte(offset);
-    let mut return_value: String = get_hex_value_for_byte_slice(&offset.to_le_bytes());
+    let mut return_value: String = get_hex_value_from_byte_slice(&offset.to_le_bytes());
     let mut curr_word: [u8; 2] = [0, 0];
     let mut byte_index: u8 = 0;
     for curr_byte_ref in bytes {
@@ -71,7 +71,7 @@ fn get_byte_line(bytes: &Vec<u8>, offset: u32, is_little_endian: bool) -> String
             byte_index = byte_index + 1;
         } else {
             return_value = format!("{} {}", return_value, 
-                get_hex_value_for_byte_slice(&curr_word));
+                get_hex_value_from_byte_slice(&curr_word));
             byte_index = 0;
             curr_word = [0, 0];
         }
@@ -80,7 +80,7 @@ fn get_byte_line(bytes: &Vec<u8>, offset: u32, is_little_endian: bool) -> String
     /* If there are an odd number of bytes in the sequence then print the last byte in the MSB position of the next word  */
     if byte_index == 1 {
         return_value = format!("{} {}", return_value, 
-            get_hex_value_for_byte_slice(&curr_word));
+            get_hex_value_from_byte_slice(&curr_word));
     }
 
     return_value
@@ -118,7 +118,7 @@ fn is_byte_vec_equal(left_bytes: &Vec<u8>, right_bytes: &Vec<u8>) -> bool {
     }
 }
 
-fn get_hex_value_for_byte_slice(byte_vec: &[u8]) -> String {
+fn get_hex_value_from_byte_slice(byte_vec: &[u8]) -> String {
     let mut return_value: String = String::new();
     for curr_byte_ref in byte_vec {
         let curr_byte: u8 = *curr_byte_ref;
