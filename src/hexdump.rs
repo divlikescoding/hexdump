@@ -48,7 +48,6 @@ pub fn hexdump(cmd_line_args: CommandLineArgs) {
 }
 
 fn get_byte_line(bytes: &Vec<u8>, offset: u32, is_little_endian: bool) -> String {
-    //let mut return_value: String = get_hex_value_for_four_byte(offset);
     let mut return_value: String = get_hex_value_from_byte_slice(&offset.to_le_bytes());
     let mut curr_word: [u8; 2] = [0, 0];
     let mut byte_index: u8 = 0;
